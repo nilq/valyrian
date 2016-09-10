@@ -10,19 +10,19 @@ function type(n)
   if _type(n) == "table" then
     mt = getmetatable(n) or mt
   end
-  if _type(rawget(mt), "__type") == "string" then
+  if _type(rawget(mt, "__type")) == "string" then
     return rawget(meta, "__type")
   end
   return _type(n)
 end
 
 function struct(n)
-  if rawget(_objects, n) ~= nil then
-    local t = getmetatable(rawget(_objects, n)).__type
-    error "trying to redefine '" .. t .. "' : " .. n .. "!"
+  if rawget(_things, n) ~= nil then
+    local t = getmetatable(rawget(_things, n)).__type
+    error("trying to redefine " .. t .. " : " .. n .. "!")
   end
-  _objects[n] = {}
-  setmetatable(_objects[n], {
+  _things[n] = {}
+  setmetatable(_things[n], {
     __type   = "struct",
     __object = n,
     __parents = {},
@@ -34,21 +34,21 @@ function struct(n)
       end
       if type(body) == "table" then
         for k, v in pairs(body) do
-          _objects[n][k] = v
+          _things[n][k] = v
         end
-        getmetatable(_objects[n]).__newindex = function() end
+        getmetatable(_things[n]).__newindex = function() end
       else
         error "trying to define struct with no body!"
       end
     end,
     __index = function(t, parent)
-      local mt = getmetatable(_objects[n])
+      local mt = getmetatable(_things[n])
       table.insert(mt.__parents, parent)
-      for k, v in pairs(_objects[parent]) do
+      for k, v in pairs(_things[parent]) do
         if k == parent then
-          _objects[n][n] = v
+          _things[n][n] = v
         else
-          _objects[n][k] = v
+          _things[n][k] = v
         end
       end
       return ft
