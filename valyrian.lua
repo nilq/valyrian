@@ -73,7 +73,7 @@ function class(n)
         body = _
       end
       if type(body) == "table" then
-        for k, v in pairs(body) then
+        for k, v in pairs(body) do
           _things[n][k] = v
         end
         getmetatable(_things[n]).__newindex = function() end
@@ -94,4 +94,20 @@ function class(n)
     end,
   })
   return ft
+end
+
+function new(n, ...)
+  local mt = getmetatable(_things[n])
+  local instance = setmetatable({}, {
+    __parents = mt.__parents,
+    __object  = mt.__object,
+    __type    = mt.__type,
+  })
+  for k, v in pairs(_things[n]) do
+    instance[k] = v
+  end
+  if type(instance[n]) == "function" then
+    instance[n](instance, ...)
+  end
+  return instance
 end
