@@ -19,7 +19,7 @@ end
 function struct(n)
   if rawget(_things, n) ~= nil then
     local t = getmetatable(rawget(_things, n)).__type
-    error("trying to redefine " .. t .. " : " .. n .. "!")
+    error("trying to redefine " .. t .. ": " .. n .. "!")
   end
   _things[n] = {}
   setmetatable(_things[n], {
@@ -44,6 +44,45 @@ function struct(n)
     __index = function(t, parent)
       local mt = getmetatable(_things[n])
       table.insert(mt.__parents, parent)
+      for k, v in pairs(_things[parent]) do
+        if k == parent then
+          _things[n][n] = v
+        else
+          _things[n][k] = v
+        end
+      end
+      return ft
+    end,
+  })
+  return ft
+end
+
+function class(n)
+  if rawget(_things, n) ~= nil then
+    local t = getmetatable(rawget(_things, n)).__type
+    error("trying to redefine " .. t .. ": " .. n)
+  end
+  _things[n] = setmetatable({}, {
+    __type    = "class",
+    __object  = n,
+    __parents = {},
+  })
+  local ft = setmetatable({}, {
+    __call = function(t, body, _)
+      if _ then
+        body = _
+      end
+      if type(body) == "table" then
+        for k, v in pairs(body) then
+          _things[n][k] = v
+        end
+        getmetatable(_things[n]).__newindex = function() end
+      end
+    end,
+    __index = function(t, parent)
+      local mt = getmetatable(_things[n])
+      table.insert(mt.__parents, parent)
+      mt.__parents[parent] = true
       for k, v in pairs(_things[parent]) do
         if k == parent then
           _things[n][n] = v
