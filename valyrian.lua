@@ -32,11 +32,8 @@ class = setmetatable({}, {
   __parents  = {},
   __index    = function(_, k)
     return function(_, ...)
-      if _things[n] then
+      if _things[k] then
         error("trying to redefine class '" .. k .. "'!")
-      end
-      if parent then
-        print("inherit from: " .. parent)
       end
 
       local parents = {...}
@@ -49,7 +46,9 @@ class = setmetatable({}, {
           _things[k] = body
           for _, p in ipairs(parents) do
             for n, v in pairs(_things[p]) do
-              _things[k][n] = v
+              if _things[k][n] == nil then
+                _things[k][n] = v
+              end
             end
           end
         else
@@ -119,4 +118,16 @@ event = setmetatable({}, {
       return r
     end
   end,
+})
+
+super = setmetatable({}, {
+  __call     = call_index,
+  __newindex = function() end,
+  __index    = function(_, method)
+    return function(_, ...)
+      local r = {}
+
+      return r
+    end
+  end
 })
