@@ -91,7 +91,6 @@ new = setmetatable({}, {
         __type = n,
         __parents = getmetatable(_things[n]).__parents,
       })
-      print("set parents : " .. tostring(getmetatable(_instances[instance]).__parents))
       if instance.awake then
         instance.awake(...)
       end
