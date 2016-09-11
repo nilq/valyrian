@@ -1,7 +1,13 @@
 require "valyrian"
 
 class: Foo() {
-
+  hello = "I am Foo's value!";
 }
 
-local bar = new: Foo()
+class: Bar("Foo") {
+  awake = function()
+    print(self.hello)
+  end;
+}
+
+local bar = new: Bar()

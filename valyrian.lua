@@ -39,12 +39,19 @@ class = setmetatable({}, {
         print("inherit from: " .. parent)
       end
 
+      local parents = {...}
+
       return function(body)
         if type(body) == "table" then
           if body.self ~= nil then
             error "class can't contain 'self'!"
           end
           _things[k] = body
+          for _, p in ipairs(parents) do
+            for n, v in pairs(_things[p]) do
+              _things[k][n] = v
+            end
+          end
         else
           error("trying to define class '" .. k .. "' with no body!")
         end
