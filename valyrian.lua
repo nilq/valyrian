@@ -29,7 +29,6 @@ class = setmetatable({}, {
   __call     = call_index,
   __newindex = function() end,
   __type     = "thing",
-  __parents  = {},
   __index    = function(_, k)
     return function(_, ...)
       if _things[k] then
@@ -44,6 +43,11 @@ class = setmetatable({}, {
             error "class can't contain 'self'!"
           end
           _things[k] = body
+
+          setmetatable(_things[k], {
+            __parents = parents,
+          })
+
           for _, p in ipairs(parents) do
             for n, v in pairs(_things[p]) do
               if _things[k][n] == nil then
@@ -85,7 +89,9 @@ new = setmetatable({}, {
           data[k] = v
         end,
         __type = n,
+        __parents = getmetatable(_things[n]).__parents,
       })
+      print("set parents : " .. tostring(getmetatable(_instances[instance]).__parents))
       if instance.awake then
         instance.awake(...)
       end
@@ -123,10 +129,22 @@ event = setmetatable({}, {
 super = setmetatable({}, {
   __call     = call_index,
   __newindex = function() end,
-  __index    = function(_, method)
-    return function(_, ...)
+  __index    = function(_, value)
+    return function(_, n, p, ...)
       local r = {}
+      local mt = getmetatable(_instances[n])
 
+      for k, v in pairs(mt.__parents) do
+        if v == p then
+          local v_type = type(_things[v][value])
+          if v_type == "function" then
+            return _things[v][value](...)
+          end
+          return _things[v][value]
+        else
+          error(p .. " is not a parent of " .. mt.__type .. "!")
+        end
+      end
       return r
     end
   end

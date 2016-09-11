@@ -15,3 +15,5 @@ class: Bar("Foo") {
 }
 
 local bar = new: Bar()
+
+super:awake(bar, "Foo")
