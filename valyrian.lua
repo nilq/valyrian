@@ -28,7 +28,7 @@ end
 class = setmetatable({}, {
   __call     = call_index,
   __newindex = function() end,
-  __type     = "thing",
+  __type     = "class",
   __index    = function(_, k)
     return function(_, ...)
       if _things[k] then
@@ -100,7 +100,7 @@ new = setmetatable({}, {
   end,
 })
 
-remove = function(instance, ...)
+kill = function(instance, ...)
   if not instance then
     error "trying to remove nil!"
   end
