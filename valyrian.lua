@@ -1,8 +1,17 @@
-local _things = setmetatable({}, {
-  __index = function(t, k)
-    error "trying to reference undefined thing!"
+require "deepcopy"
+
+local _things = {}
+local _instances = {}
+
+local function call_index(t, func, ...)
+  local args = {...}
+  if #args > 0 then
+    return getmetatable(t).__index(nil, func)(nil, ...)
   end
-})
+  return function(...)
+    return getmetatable(t).__index(nil, func)(nil, ...)
+  end
+end
 
 local _type = type
 function type(n)
@@ -16,98 +25,91 @@ function type(n)
   return _type(n)
 end
 
-function struct(n)
-  if rawget(_things, n) ~= nil then
-    local t = getmetatable(rawget(_things, n)).__type
-    error("trying to redefine " .. t .. ": " .. n .. "!")
-  end
-  _things[n] = {}
-  setmetatable(_things[n], {
-    __type   = "struct",
-    __object = n,
-    __parents = {},
-  })
-  local ft = setmetatable({}, {
-    __call = function(t, body, _)
-      if _ then
-        body = _
+class = setmetatable({}, {
+  __call     = call_index,
+  __newindex = function() end,
+  __type     = "thing",
+  __parents  = {},
+  __index    = function(_, k)
+    return function(_, ...)
+      if _things[n] then
+        error("trying to redefine class '" .. k .. "'!")
       end
-      if type(body) == "table" then
-        for k, v in pairs(body) do
-          _things[n][k] = v
-        end
-        getmetatable(_things[n]).__newindex = function() end
-      else
-        error "trying to define struct with no body!"
+      if parent then
+        print("inherit from: " .. parent)
       end
-    end,
-    __index = function(t, parent)
-      local mt = getmetatable(_things[n])
-      table.insert(mt.__parents, parent)
-      for k, v in pairs(_things[parent]) do
-        if k == parent then
-          _things[n][n] = v
+
+      return function(body)
+        if type(body) == "table" then
+          if body.self ~= nil then
+            error "class can't contain 'self'!"
+          end
+          _things[k] = body
         else
-          _things[n][k] = v
+          error("trying to define class '" .. k .. "' with no body!")
         end
       end
-      return ft
-    end,
-  })
-  return ft
+    end
+  end,
+})
+
+new = setmetatable({}, {
+  __call     = call_index,
+  __newindex = function() end,
+  __index    = function(_, n)
+    return function(_, ...)
+      if not _things[n] then
+        error("trying to instantiate undefined class '" .. n .. "'!")
+      end
+      local instance = {}
+      local data     = table.deepcopy(_things[n], { function_env = instance }, {
+        ["userdata"] = function(stack, orig, copy, state, arg1, arg2)
+          return orig, true
+        end,
+      })
+      _instances[instance] = setmetatable(instance, {
+        __index = function(t, k)
+          if k == "self" then
+            return instance
+          else
+            return data[k] or (_ENV or _G)[k]
+          end
+        end,
+        __newindex = function(t, k, v)
+          data[k] = v
+        end,
+        __type = n,
+      })
+      if instance.awake then
+        instance.awake(...)
+      end
+      return instance
+    end
+  end,
+})
+
+remove = function(instance, ...)
+  if not instance then
+    error "trying to remove nil!"
+  end
+  _instances[instance] = nil
+  if instance.kill then
+    return instance.kill(...)
+  end
 end
 
-function class(n)
-  if rawget(_things, n) ~= nil then
-    local t = getmetatable(rawget(_things, n)).__type
-    error("trying to redefine " .. t .. ": " .. n)
-  end
-  _things[n] = setmetatable({}, {
-    __type    = "class",
-    __object  = n,
-    __parents = {},
-  })
-  local ft = setmetatable({}, {
-    __call = function(t, body, _)
-      if _ then
-        body = _
-      end
-      if type(body) == "table" then
-        for k, v in pairs(body) do
-          _things[n][k] = v
-        end
-        getmetatable(_things[n]).__newindex = function() end
-      end
-    end,
-    __index = function(t, parent)
-      local mt = getmetatable(_things[n])
-      table.insert(mt.__parents, parent)
-      mt.__parents[parent] = true
-      for k, v in pairs(_things[parent]) do
-        if k == parent then
-          _things[n][n] = v
-        else
-          _things[n][k] = v
+event = setmetatable({}, {
+  __call     = call_index,
+  __newindex = function() end,
+  __index    = function(_, method)
+    return function(_, ...)
+      local r = {}
+      for instance in pairs(_instances) do
+        if instance[method] then
+          r[instance] = instance[method](...)
         end
       end
-      return ft
-    end,
-  })
-  return ft
-end
-
-function new(n, ...)
-  local mt = getmetatable(_things[n])
-  local instance = setmetatable({}, {
-    __parents = mt.__parents,
-    __object  = mt.__object,
-    __type    = mt.__type,
-  })
-  for k, v in pairs(_things[n]) do
-    instance[k] = v
-  end
-  if type(instance[n]) == "function" then
-    instance[n](instance, ...)
-  end
-  return instance
-end
+      return r
+    end
+  end,
+})

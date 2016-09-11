@@ -1,11 +1,7 @@
 require "valyrian"
-struct "foo" {
-  x = 110,
-  y = 0,
+
+class: Foo() {
+
 }
-class "Foo" {
-  Foo = function(self)
-    print("Constructed!")
-  end;
-}
-local instance = new "Foo"
+
+local bar = new: Foo()
