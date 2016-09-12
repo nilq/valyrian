@@ -1,6 +1,10 @@
 require "lib/valyrian"
+require "lib/input"
 
 love.graphics.setDefaultFilter("nearest", "nearest")
+
+-- global objects
+input = new: Input()
 
 function love.run()
   local dt = 0
@@ -26,7 +30,7 @@ function love.run()
     if love.event then
       love.event.pump()
       for name, a, b, c, d, e, f in love.event.poll() do
-        event:name(a, b, c, d, e, f)
+        event[name](a, b, c, d, e, f)
         if name == "quit" then
           if not love.quit or not love.quit() then
             return a
