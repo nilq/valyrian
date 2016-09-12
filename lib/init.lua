@@ -1,5 +1,6 @@
 require "lib/valyrian"
 require "lib/input"
+require "lib/timer"
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 
