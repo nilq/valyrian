@@ -26,4 +26,7 @@ timer = new: Timer(function()
   return 2
 end, 0)
 
+local vec = new: Vector(100, 100)
+print(vec.x, vec.y, vec:magnitude())
+
 event: filtered_method("yay, argument!")
