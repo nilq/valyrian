@@ -113,17 +113,10 @@ event = setmetatable({}, {
   __call     = call_index,
   __newindex = function() end,
   __index    = function(_, method)
-    return function(_, filter, ...)
+    return function(_, ...)
       local r = {}
       for instance in pairs(_instances) do
-        local args = {...}
-        if filter and type(filter) == "function" then
-          if filter(instance) then
-            if instance[method] then
-              r[instance] = instance[method](...)
-            end
-          end
-        elseif instance[method] then
+        if instance[method] then
           r[instance] = instance[method](...)
         end
       end
