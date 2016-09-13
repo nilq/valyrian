@@ -5,7 +5,7 @@ point of view.
 
 ---
 List of things that needs improvement:
-  - *super* : A better thing for accessing parent class methods
+1. *super* : A better thing for accessing parent class methods
 ---
 
 Example - Moving a rectangle:
