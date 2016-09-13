@@ -1,10 +1,14 @@
+-- some standard classes depend on others ...
+-- order matters!
 require "lib/valyrian"
+require "lib/math"
 
 require "lib/class/input"
 require "lib/class/timer"
 require "lib/class/vector"
 require "lib/class/transform"
 
+require "lib/class/world"
 require "lib/class/camera"
 
 love.graphics.setDefaultFilter("nearest", "nearest")
@@ -72,8 +76,4 @@ function love.run()
       love.timer.sleep(0.001)
     end
   end
-end
--- fancy math stuff
-function math.lerp(a, b, k)
-  return a * (1 - k) + b * k
 end
