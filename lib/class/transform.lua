@@ -1,8 +1,12 @@
 class: Transform2D() {
   awake = function(pos, rot, sca)
-    self.position = new: Vector(pos.x, pos.y)
+    pos = pos or {}
+    rot = rot or 0
+    sca = sca or {}
+
+    self.position = new: Vector(pos.x or 0, pos.y or 1)
     self.rotation = rot
-    self.scale    = new: Vector(sca.x, sca.y)
+    self.scale    = new: Vector(sca.x or 1, sca.y or 1)
   end;
 
   translate = function(dx, dy)
