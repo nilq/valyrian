@@ -11,14 +11,14 @@ class: Camera("Transform2D") {
   end;
 
   view_width = function()
-    love.graphics.getWidth() * self.scale.x
+    return love.graphics.getWidth() * self.scale.x
   end;
 
   view_height = function()
-    love.graphics.getHeight() * self.scale.y
+    return love.graphics.getHeight() * self.scale.y
   end;
 
   view_size = function()
     return self.view_width(), self.view_height()
-  end
+  end;
 }

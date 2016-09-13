@@ -11,6 +11,7 @@ love.graphics.setDefaultFilter("nearest", "nearest")
 
 -- global objects
 input = new: Input()
+camera = new: Camera({x = 0, y = 0}, {x = 1, y = 1}, 0)
 
 function love.run()
   local dt = 0
@@ -60,7 +61,9 @@ function love.run()
 
       love.graphics.origin()
 
+      camera.set()
       event:draw()
+      camera.unset()
 
       love.graphics.present()
     end

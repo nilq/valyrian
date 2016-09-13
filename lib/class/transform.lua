@@ -1,8 +1,8 @@
 class: Transform2D() {
-  awake = function(pos, rot, sca)
+  awake = function(pos, sca, rot)
     pos = pos or {}
-    rot = rot or 0
     sca = sca or {}
+    rot = rot or 0
 
     self.position = new: Vector(pos.x or 0, pos.y or 1)
     self.rotation = rot
