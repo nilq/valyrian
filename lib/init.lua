@@ -3,6 +3,7 @@ require "lib/valyrian"
 require "lib/class/input"
 require "lib/class/timer"
 require "lib/class/vector"
+require "lib/class/transform"
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 
