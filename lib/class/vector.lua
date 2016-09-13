@@ -12,7 +12,6 @@ class: Vector() {
       elseif i == 4 then
         self.w = v
       end
-
       self.body[#self.body + 1] = v
     end
   end;
@@ -31,34 +30,62 @@ class: Vector() {
     return r
   end;
   dot = function(b)
-    assert(type(b) == type(self.body), "can't dot 'vector' with 'non-vector'!")
-    assert(#self.body == #b, "can't dot 'vectors' of different dimensions!")
     for n = 1, #self.body do
-      self.body[n] = self.body[n] * b[n]
+      self.body[n] = self.body[n] * b.body[n]
+      if n == 1 then
+        self.x = self.body[n]
+      elseif n == 2 then
+        self.y = self.body[n]
+      elseif n == 3 then
+        self.z = self.body[n]
+      elseif n == 4 then
+        self.w = self.body[n]
+      end
     end
     return self
   end;
   subtract = function(b)
-    assert(type(b) == type(self.body), "can't subtract 'vector' with 'non-vector'!")
-    assert(#self.body == #b, "can't subtract 'vectors' of different dimensions!")
     for n = 1, #self.body do
-      self.body[n] = self.body[n] - b[n]
+      self.body[n] = self.body[n] - b.body[n]
+      if n == 1 then
+        self.x = self.body[n]
+      elseif n == 2 then
+        self.y = self.body[n]
+      elseif n == 3 then
+        self.z = self.body[n]
+      elseif n == 4 then
+        self.w = self.body[n]
+      end
     end
     return self
   end;
   add = function(b)
-    assert(type(b) == type(self.body), "can't add 'vector' with 'non-vector'!")
-    assert(#self.body == #b, "can't add 'vectors' of different dimensions!")
     for n = 1, #self.body do
-      self.body[n] = self.body[n] + b[n]
+      self.body[n] = self.body[n] + b.body[n]
+      if n == 1 then
+        self.x = self.body[n]
+      elseif n == 2 then
+        self.y = self.body[n]
+      elseif n == 3 then
+        self.z = self.body[n]
+      elseif n == 4 then
+        self.w = self.body[n]
+      end
     end
     return self
   end;
   divide = function(b)
-    assert(type(b) == type(self.body), "can't divide 'vector' with 'non-vector'!")
-    assert(#self.body == #b, "can't divide 'vectors' of different dimensions!")
     for n = 1, #self.body do
-      self.body[n] = self.body[n] / b[n]
+      self.body[n] = self.body[n] / b.body[n]
+      if n == 1 then
+        self.x = self.body[n]
+      elseif n == 2 then
+        self.y = self.body[n]
+      elseif n == 3 then
+        self.z = self.body[n]
+      elseif n == 4 then
+        self.w = self.body[n]
+      end
     end
     return self
   end;
