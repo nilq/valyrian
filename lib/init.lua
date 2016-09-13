@@ -73,3 +73,7 @@ function love.run()
     end
   end
 end
+-- fancy math stuff
+function math.lerp(a, b, k)
+  return a * (1 - k) + b * k
+end
