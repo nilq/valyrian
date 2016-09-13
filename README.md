@@ -4,8 +4,10 @@ A library approaching LÖVE game development with a class-based object oriented
 point of view.
 
 ---
+
 List of things that needs improvement:
 1. *super* : A better thing for accessing parent class methods
+
 ---
 
 Example - Moving a rectangle:
