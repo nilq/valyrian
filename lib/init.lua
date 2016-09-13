@@ -5,6 +5,8 @@ require "lib/class/timer"
 require "lib/class/vector"
 require "lib/class/transform"
 
+require "lib/class/camera"
+
 love.graphics.setDefaultFilter("nearest", "nearest")
 
 -- global objects
